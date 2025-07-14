@@ -5,6 +5,8 @@
 # Creates a folder (default "NAME") in current dir, installs deps, builds llama.cpp,
 # downloads quantized model, fetches additional scripts, and summarizes.
 
+set -euo pipefail
+
 # Configuration
 dir_name="${1:-NAME}"
 base_dir="$(pwd)"
@@ -12,7 +14,6 @@ root_dir="$base_dir/$dir_name"
 llama_dir="$root_dir/llama.cpp"
 models_dir="$llama_dir/models"
 
-# Step counter
 i=1
 
 echo "Step $i: Creating target directory at $root_dir"
@@ -20,7 +21,10 @@ mkdir -p "$models_dir"
 ((i++))
 
 echo "Step $i: Installing dependencies"
-for pkg in git cmake clang make wget unzip aria2c; do
+# Core dependencies (Termux: 'pkg', Ubuntu: apt-get, etc.)
+deps=(git cmake clang make wget unzip)
+
+for pkg in "${deps[@]}"; do
   echo " - Checking $pkg"
   if ! command -v "$pkg" &>/dev/null; then
     echo "   Installing $pkg..."
@@ -31,7 +35,7 @@ for pkg in git cmake clang make wget unzip aria2c; do
     elif command -v dnf &>/dev/null; then
       sudo dnf install -y "$pkg"
     elif command -v pkg &>/dev/null; then
-      pkg update && pkg install "$pkg"
+      pkg update -y && pkg install -y "$pkg"
     else
       echo "   ERROR: cannot install $pkg" >&2
       exit 1
@@ -40,6 +44,26 @@ for pkg in git cmake clang make wget unzip aria2c; do
     echo "   $pkg already installed"
   fi
 done
+
+# Install aria2 (provides aria2c)
+echo " - Checking aria2c"
+if ! command -v aria2c &>/dev/null; then
+  echo "   Installing aria2..."
+  if command -v apt-get &>/dev/null; then
+    sudo apt-get install -y aria2
+  elif command -v yum &>/dev/null; then
+    sudo yum install -y aria2
+  elif command -v dnf &>/dev/null; then
+    sudo dnf install -y aria2
+  elif command -v pkg &>/dev/null; then
+    pkg install -y aria2
+  else
+    echo "   ERROR: cannot install aria2" >&2
+    exit 1
+  fi
+else
+  echo "   aria2c already installed"
+fi
 ((i++))
 
 echo "Step $i: Cloning llama.cpp into $llama_dir"
@@ -48,13 +72,12 @@ if [ -d "$llama_dir" ]; then
   rm -rf "$llama_dir"
 fi
 
-# Clone fresh copy
 git clone https://github.com/ggerganov/llama.cpp.git "$llama_dir"
 ((i++))
 
 echo "Step $i: Building llama.cpp"
-cd "$llama_dir" || exit
-mkdir -p build && cd build || exit
+cd "$llama_dir"
+mkdir -p build && cd build
 cmake .. -DLLAMA_CURL=OFF
 cmake --build . --config Release
 ((i++))
@@ -73,12 +96,17 @@ done
 ((i++))
 
 echo "Step $i: Downloading model $model"
-cd "$models_dir" || exit
-aria2c -c "$url" -o "tinyllama-$model.gguf"
+cd "$models_dir"
+if command -v aria2c &>/dev/null; then
+  aria2c -c "$url" -o "tinyllama-$model.gguf"
+else
+  echo "aria2c not found, falling back to wget (no resume)"
+  wget "$url" -O "tinyllama-$model.gguf"
+fi
 ((i++))
 
 echo "Step $i: Fetching additional scripts"
-cd "$root_dir" || exit
+cd "$root_dir"
 wget -O bridge.log https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/v0.0.2/bridge.log
 wget -O name.sh   https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/v0.0.2/name.sh
 ((i++))
@@ -90,4 +118,3 @@ Build: $llama_dir/build
 Model: $models_dir/tinyllama-$model.gguf
 Scripts: $root_dir/bridge.log, $root_dir/name.sh
 "
-
