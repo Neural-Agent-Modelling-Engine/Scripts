@@ -79,6 +79,9 @@ git clone https://github.com/ggerganov/llama.cpp.git "$llama_dir"
 # Patch for Termux ARM NEON redefinition bug
 sed -i '/inline static int32x4_t vcvtnq_s32_f32(float32x4_t v) {/i #ifndef __ARM_FEATURE_DIRECTED_ROUNDING' "$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
 sed -i '/return vcvtnq_s32_f32(v);/a #endif' "$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
+
+# Patch for unterminated conditional in ggml-quants.c include
+sed -i '81i\#endif' "$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
 ((i++))
 
 echo "Step $i: Building llama.cpp"
