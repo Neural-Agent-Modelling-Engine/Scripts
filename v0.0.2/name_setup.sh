@@ -74,7 +74,10 @@ echo "Step $i: Cloning latest llama.cpp into $llama_dir"
 echo "Step $i: Building llama.cpp"
  cd "$llama_dir"
  mkdir -p build && cd build
- CFLAGS="-mfpu=neon -march=armv7-a+neon" cmake .. -DLLAMA_CURL=OFF
+ # Use ARMv7 and NEON without unsupported '+neon' syntax
+ export CFLAGS="-mfpu=neon -march=armv7-a"
+ export CXXFLAGS="-mfpu=neon -march=armv7-a"
+ cmake .. -DLLAMA_CURL=OFF
  cmake --build . --config Release
  ((i++))
 
