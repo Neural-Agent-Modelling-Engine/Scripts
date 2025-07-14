@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TinyLLaMA Setup Script (Fixed)
+# TinyLLaMA Setup Script (Fixed & Updated)
 # Usage: ./name_setup.sh [target_directory]
 # Creates a folder (default "NAME"), installs deps, builds llama.cpp,
 # downloads quantized model, fetches additional scripts, and summarizes.
@@ -20,7 +20,7 @@ echo "Step $i: Creating target directory at $root_dir"
  ((i++))
 
 echo "Step $i: Installing dependencies"
- deps=(git cmake clang make wget unzip)
+ deps=(build-essential cmake git automake patchelf libexpat openssl libandroid-execinfo ninja protobuf libsodium clang make wget unzip)
  for pkg in "${deps[@]}"; do
    echo -n " - Checking $pkg... "
    if ! command -v "$pkg" &>/dev/null; then
@@ -63,34 +63,18 @@ echo "Step $i: Installing dependencies"
  fi
  ((i++))
 
-echo "Step $i: Cloning llama.cpp into $llama_dir"
+echo "Step $i: Cloning latest llama.cpp into $llama_dir"
  if [ -d "$llama_dir" ]; then
    echo "   Removing previous installation"
    rm -rf "$llama_dir"
  fi
- git clone https://github.com/ggerganov/llama.cpp.git "$llama_dir"
-
-# Patch fixes (idempotent)
- impl_file="$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
-
- # 1) Remove any stray unterminated #endif + NEON open
- if sed -n '81,82p' "$impl_file" | grep -q '^#endif$' && grep -q '^#if defined(__ARM_NEON)' <<< "$(sed -n '82p' "$impl_file")"; then
-   echo "Removing stray unterminated #endif..."
-   sed -i '/^#endif$/N;/\n#if defined(__ARM_NEON)/d' "$impl_file"
- fi
-
- # 2) Guard ARM directed rounding patch
- if ! grep -q '__ARM_FEATURE_DIRECTED_ROUNDING' "$impl_file"; then
-   echo "Applying ARM directed rounding guard..."
-   sed -i '/inline static int32x4_t vcvtnq_s32_f32(float32x4_t v) {/i #ifndef __ARM_FEATURE_DIRECTED_ROUNDING' "$impl_file"
-   sed -i '/return vcvtnq_s32_f32(v);/a #endif' "$impl_file"
- fi
+ git clone --depth 1 https://github.com/ggerganov/llama.cpp.git "$llama_dir"
  ((i++))
 
 echo "Step $i: Building llama.cpp"
  cd "$llama_dir"
  mkdir -p build && cd build
- cmake .. -DLLAMA_CURL=OFF
+ CFLAGS="-mfpu=neon -march=armv7-a+neon" cmake .. -DLLAMA_CURL=OFF
  cmake --build . --config Release
  ((i++))
 
