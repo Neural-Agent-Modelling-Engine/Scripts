@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# TinyLLaMA Setup Script (Fixed & Updated)
+# TinyLLaMA Setup Script (Fixed & ARMv7-FP16)
 # Usage: ./name_setup.sh [target_directory]
 # Creates a folder (default "NAME"), installs deps, builds llama.cpp,
 # downloads quantized model, fetches additional scripts, and summarizes.
@@ -71,25 +71,12 @@ echo "Step $i: Cloning latest llama.cpp into $llama_dir"
  git clone --depth 1 https://github.com/ggerganov/llama.cpp.git "$llama_dir"
  ((i++))
 
-# Patch: Remove custom vcvtnq_s32_f32 to avoid clash with <arm_neon.h>
-impl_file="$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
-echo "Removing custom vcvtnq_s32_f32 implementation to prevent redefinition"
-sed -i '/inline static int32x4_t vcvtnq_s32_f32/,/^}/d' "$impl_file"
-# No need for ARM rounding guard now
-file="$llama_dir/ggml/src/ggml-cpu/ggml-cpu-impl.h"
- if ! grep -q '#if !defined(__ARM_NEON)' "$impl_file"; then
-   echo "Guarding custom vcvtnq_s32_f32 definition against __ARM_NEON"
-   # Insert guard before function
-   sed -i '/inline static int32x4_t vcvtnq_s32_f32(float32x4_t v) {/i #if !defined(__ARM_NEON)' "$impl_file"
-   # Close guard after the function's closing brace
-   sed -i '/inline static int32x4_t vcvtnq_s32_f32(float32x4_t v) {/,/}/ s|}$|}\n#endif|' "$impl_file"
- fi
-
 echo "Step $i: Building llama.cpp"
  cd "$llama_dir"
  mkdir -p build && cd build
- export CFLAGS="-mfpu=neon -march=armv7-a"
- export CXXFLAGS="-mfpu=neon -march=armv7-a"
+ # Enable ARMv7 NEON with FP16 support
+ export CFLAGS="-mfpu=neon-fp16 -march=armv7-a"
+ export CXXFLAGS="-mfpu=neon-fp16 -march=armv7-a"
  cmake .. -DLLAMA_CURL=OFF
  cmake --build . --config Release
  ((i++))
