@@ -21,7 +21,7 @@ mkdir -p "$models_dir"
 ((i++))
 
 echo "Step $i: Installing dependencies"
-# Core dependencies (Termux: 'pkg', Ubuntu: apt-get, etc.)
+# Core dependencies (Git, build tools, downloaders)
 deps=(git cmake clang make wget unzip)
 
 for pkg in "${deps[@]}"; do
@@ -34,8 +34,10 @@ for pkg in "${deps[@]}"; do
       sudo yum install -y "$pkg"
     elif command -v dnf &>/dev/null; then
       sudo dnf install -y "$pkg"
-    elif command -v pkg &>/dev/null; then
-      pkg update -y && pkg install -y "$pkg"
+    elif command -v pkg &>/dev/null && [[ "$(uname -o 2>/dev/null || echo)" == *Android* ]]; then
+      # Termux: pkg auto-confirms
+      pkg update
+      pkg install "$pkg"
     else
       echo "   ERROR: cannot install $pkg" >&2
       exit 1
@@ -55,8 +57,8 @@ if ! command -v aria2c &>/dev/null; then
     sudo yum install -y aria2
   elif command -v dnf &>/dev/null; then
     sudo dnf install -y aria2
-  elif command -v pkg &>/dev/null; then
-    pkg install -y aria2
+  elif command -v pkg &>/dev/null && [[ "$(uname -o 2>/dev/null || echo)" == *Android* ]]; then
+    pkg install aria2
   else
     echo "   ERROR: cannot install aria2" >&2
     exit 1
