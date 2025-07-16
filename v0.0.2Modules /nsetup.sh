@@ -13,6 +13,8 @@ cat <<'EOF'
  SAS.6 - Neural Agent Modelling Engine [ NAME ]
  v0.0.2
  Product by Bornelabs™ [ www.bornelabs.tech ]
+
+
 EOF
 
 # Determine project directory
