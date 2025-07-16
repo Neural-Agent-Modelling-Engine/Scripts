@@ -23,12 +23,13 @@ mkdir -p "$root_dir"
 echo "Select your TinyLLaMA quantization:"
 options=("Q2_K (~2.98 GB)" "Q4_K_M (~3.17 GB)" "Q8_0 (~3.67 GB)")
 
-# Prompt until valid selection; read from terminal
+# Prompt until valid selection; use /dev/tty to ensure interactive input
 while true; do
   echo "1) ${options[0]}"
   echo "2) ${options[1]}"
   echo "3) ${options[2]}"
-  read -r -p "Choose model (1-3): " choice
+  # read from the terminal device, not stdin
+  read -r -p "Choose model (1-3): " choice < /dev/tty
 
   case "$choice" in
     1)
@@ -54,7 +55,10 @@ while true; do
 
 done
 
-echo "model=$model" > "$config_file"
-echo "url=$url"   >> "$config_file"
+# Save selection
+{
+  echo "model=$model"
+  echo "url=$url"
+} > "$config_file"
 
 echo "Saved selection to $config_file ($model)"
