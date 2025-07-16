@@ -7,7 +7,6 @@ cat <<'EOF'
  ___) |  __/ |_| |_| | | | | (_| | | |_| | |_) |
 |____/ \___|\__|\__|_|_| |_|\__, |  \___/| .__/ 
                             |___/        |_|    
-  
 EOF
 
 dir_name="${1:-NAME}"
@@ -21,3 +20,9 @@ wget -O name.sh   https://raw.githubusercontent.com/Neural-Agent-Modelling-Engin
 chmod +x name.sh
 
 echo "Fetch complete."
+echo
+
+# Allow running "name.sh" by typing "call" in the NAME directory
+echo 'alias call="./name.sh"' >> "$HOME/.bashrc"
+echo 'Type `call` inside the NAME directory to launch name.sh'
+source "$HOME/.bashrc"
