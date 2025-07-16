@@ -11,6 +11,9 @@ cat <<'EOF'
 
 EOF
 
+# Open terminal for interactive input
+eval "exec </dev/tty"
+
 # Configuration
 dir_name="${1:-NAME}"
 base_dir="$(pwd)"
@@ -23,32 +26,23 @@ mkdir -p "$root_dir"
 echo "Select your TinyLLaMA quantization:"
 options=("Q2_K (~2.98 GB)" "Q4_K_M (~3.17 GB)" "Q8_0 (~3.67 GB)")
 
-# Prompt until valid selection; use /dev/tty to ensure interactive input
+# Prompt until valid selection
+i=0
 while true; do
+  ((i++)) && [ "$i" -gt 20 ] && { echo "Too many invalid attempts." >&2; exit 1; }
   echo "1) ${options[0]}"
   echo "2) ${options[1]}"
   echo "3) ${options[2]}"
-  # read from the terminal device, not stdin
-  read -r -p "Choose model (1-3): " choice < /dev/tty
+  read -r -p "Choose model (1-3): " choice
 
   case "$choice" in
-    1)
-      model="Q2_K"
-      url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q2_K.gguf"
-      break
-      ;;
-    2)
-      model="Q4_K_M"
-      url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf"
-      break
-      ;;
-    3)
-      model="Q8_0"
-      url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.Q8_0.gguf"
+    1|2|3)
+      model="${options[choice-1]%% *}"
+      url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/tinyllama-1.1b-chat-v1.0.${model}.gguf"
       break
       ;;
     *)
-      echo "Invalid choice. Please enter 1, 2, or 3."
+      echo "Invalid choice. Please enter 1, 2, or 3." >&2
       ;;
   esac
   echo
