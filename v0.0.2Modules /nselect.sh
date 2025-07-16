@@ -1,8 +1,4 @@
 #!/usr/bin/env bash
-# Ensure script runs interactively when piped (re-exec if stdin not terminal)
-if [ ! -t 0 ]; then
-  exec bash "$0" "$@"
-fi
 # nmodels.sh — Step 5: select quant and save to config with ASCII banner
 
 # ASCII Title
@@ -12,7 +8,6 @@ cat <<'EOF'
 | '_ ` _ \ / _ \ / _` |/ _ \ / __|
 | | | | | | (_) | (_| |  __/ \__ \
 |_| |_| |_|\___/ \__,_|\___|_|___/
-
 EOF
 
 # Configuration
@@ -34,11 +29,9 @@ while true; do
   echo "1) ${options[0]}"
   echo "2) ${options[1]}"
   echo "3) ${options[2]}"
-  # Always read from /dev/tty for interactive input
-  if ! read -r -p "Choose model (1-3): " choice </dev/tty; then
-    echo "Failed to read choice." >&2
-    exit 1
-  fi
+  # Prompt user
+  read -r -p "Choose model (1-3): " choice
+
   case "$choice" in
     1|2|3)
       model="${options[choice-1]%% *}"
@@ -46,7 +39,7 @@ while true; do
       break
       ;;
     *)
-      echo "Invalid choice. Please enter 1, 2, or 3." >&2
+      echo "Invalid choice. Please enter 1, 2, or 3."
       ;;
   esac
   ((i++)) && [ "$i" -gt 20 ] && { echo "Too many invalid attempts." >&2; exit 1; }
