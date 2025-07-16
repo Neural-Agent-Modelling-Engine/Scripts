@@ -1,4 +1,8 @@
 #!/usr/bin/env bash
+# Ensure script runs interactively when piped (re-exec if stdin not terminal)
+if [ ! -t 0 ]; then
+  exec bash "$0" "$@"
+fi
 # nmodels.sh — Step 5: select quant and save to config with ASCII banner
 
 # ASCII Title
@@ -8,6 +12,7 @@ cat <<'EOF'
 | '_ ` _ \ / _ \ / _` |/ _ \ / __|
 | | | | | | (_) | (_| |  __/ \__ \
 |_| |_| |_|\___/ \__,_|\___|_|___/
+
 EOF
 
 # Configuration
