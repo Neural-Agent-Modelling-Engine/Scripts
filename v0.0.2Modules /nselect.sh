@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 # nselect.sh — Step 5: select quant and save to config
+cat <<'EOF'
+ __  __           _      _     
+|  \/  | ___   __| | ___| |___ 
+| |\/| |/ _ \ / _` |/ _ \ / __|
+| |  | | (_) | (_| |  __/ \__ \
+|_|  |_|\___/ \__,_|\___|_|___/  
+  
+EOF
 
 dir_name="${1:-NAME}"
 base_dir="$(pwd)"
