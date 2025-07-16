@@ -1,5 +1,13 @@
 #!/usr/bin/env bash
 # ndependencies.sh — Step 2: install deps
+cat <<'EOF'
+ _____           _     
+|_   _|__   ___ | |___ 
+  | |/ _ \ / _ \| / __|
+  | | (_) | (_) | \__ \
+  |_|\___/ \___/|_|___/
+  
+EOF
 
 dir_name="${1:-NAME}"
 echo "Installing dependencies for project '$dir_name'..."
