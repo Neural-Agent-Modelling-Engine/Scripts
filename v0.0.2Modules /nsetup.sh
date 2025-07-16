@@ -10,9 +10,19 @@ cat <<'EOF'
 |___|_| |_|___/\__\__,_|_|_|_|_| |_|\__, |
                                     |___/ 
                                     
- SAS.6 - Neural Agent Modelling Engine [ NAME ]
- v0.0.2
- Product by Bornelabs™ [ www.bornelabs.tech ]
+╔╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╤╗
+╟┼┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┴┼╢
+╟┤                               ├╢
+╟┤             SAS.6             ├╢
+╟┤                               ├╢
+╟┤ NEURAL AGENT MODELLING ENGINE ├╢
+╟┤         NAME - V0.0.2         ├╢
+╟┤                               ├╢
+╟┤     Product by Bornelabs™     ├╢
+╟┤      www.bornelabs.tech       ├╢
+╟┤                               ├╢
+╟┼┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┬┼╢
+╚╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╧╝
 
 
 EOF
