@@ -3,11 +3,11 @@
 
 # ASCII Title
 cat <<'EOF'
-                     _      _     
- _ __ ___   ___   __| | ___| |___ 
-| '_ ` _ \ / _ \ / _` |/ _ \ / __|
-| | | | | | (_) | (_| |  __/ \__ \
-|_| |_| |_|\___/ \__,_|\___|_|___/
+ __  __           _      _
+|  \/  | ___   __| | ___| |___
+| |\/| |/ _ \\ / _` |/ _ \\ / __|
+| |  | | (_) | (_| |  __/ \\__ \
+|_|  |_|\___/ \__,_|\___|_|___/
 EOF
 
 # Configuration
@@ -29,8 +29,8 @@ while true; do
   echo "1) ${options[0]}"
   echo "2) ${options[1]}"
   echo "3) ${options[2]}"
-  # Prompt user
-  read -r -p "Choose model (1-3): " choice
+  # Prompt user from terminal directly
+  read -r -p "Choose model (1-3): " choice < /dev/tty
 
   case "$choice" in
     1|2|3)
