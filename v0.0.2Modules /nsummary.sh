@@ -1,5 +1,30 @@
 #!/usr/bin/env bash
 # nsummary.sh — Step 8: final summary
+#!/usr/bin/env bash
+# nsetup.sh — Step 1: create directories with ASCII banner
+
+
+cat <<'EOF'
+  ____                      _      _       
+ / ___|___  _ __ ___  _ __ | | ___| |_ ___ 
+| |   / _ \| '_ ` _ \| '_ \| |/ _ \ __/ _ \
+| |__| (_) | | | | | | |_) | |  __/ ||  __/
+ \____\___/|_| |_| |_| .__/|_|\___|\__\___|
+                     |_|                   
+EOF
+
+
+
+# Accept optional target directory arg, default to "NAME"
+dir_name="${1:-NAME}"
+base_dir="$(pwd)"
+root_dir="$base_dir/$dir_name"
+models_dir="$root_dir/llama.cpp/models"
+
+# Create folders
+echo "Creating target directory at $root_dir"
+mkdir -p "$models_dir"
+echo "Done."
 
 dir_name="${1:-NAME}"
 base_dir="$(pwd)"
