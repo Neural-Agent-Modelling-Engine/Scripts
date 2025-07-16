@@ -8,11 +8,7 @@ cat <<'EOF'
 | '_ ` _ \ / _ \ / _` |/ _ \ / __|
 | | | | | | (_) | (_| |  __/ \__ \
 |_| |_| |_|\___/ \__,_|\___|_|___/
-
 EOF
-
-# Open terminal for interactive input
-eval "exec </dev/tty"
 
 # Configuration
 dir_name="${1:-NAME}"
@@ -23,18 +19,21 @@ config_file="$root_dir/model.conf"
 # Ensure project root exists
 mkdir -p "$root_dir"
 
+echo
 echo "Select your TinyLLaMA quantization:"
 options=("Q2_K (~2.98 GB)" "Q4_K_M (~3.17 GB)" "Q8_0 (~3.67 GB)")
 
-# Prompt until valid selection
 i=0
 while true; do
-  ((i++)) && [ "$i" -gt 20 ] && { echo "Too many invalid attempts." >&2; exit 1; }
+  echo
   echo "1) ${options[0]}"
   echo "2) ${options[1]}"
   echo "3) ${options[2]}"
-  read -r -p "Choose model (1-3): " choice
-
+  # Always read from /dev/tty for interactive input
+  if ! read -r -p "Choose model (1-3): " choice </dev/tty; then
+    echo "Failed to read choice." >&2
+    exit 1
+  fi
   case "$choice" in
     1|2|3)
       model="${options[choice-1]%% *}"
@@ -45,8 +44,7 @@ while true; do
       echo "Invalid choice. Please enter 1, 2, or 3." >&2
       ;;
   esac
-  echo
-
+  ((i++)) && [ "$i" -gt 20 ] && { echo "Too many invalid attempts." >&2; exit 1; }
 done
 
 # Save selection
@@ -55,4 +53,5 @@ done
   echo "url=$url"
 } > "$config_file"
 
+echo
 echo "Saved selection to $config_file ($model)"
