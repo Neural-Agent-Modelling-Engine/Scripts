@@ -32,7 +32,17 @@ LLAMA_MODEL=$(find "$BUILD_DIR/../models" -maxdepth 1 -type f -name "*.gguf" \
 #LLAMA_MODEL=$(find "$BUILD_DIR/../models" -maxdepth 1 -type f -name "*.gguf" -printf "%s %p\n" \
 #             | sort -nr | head -n1 | cut -d' ' -f2-)
 
-LLAMA_OPTS="-n 128 -st"
+# Detect max context size automatically, or default to 512
+MODEL_INFO=$("$LLAMA_BIN" -m "$LLAMA_MODEL" --info 2>/dev/null)
+MAX_TOKENS=$(echo "$MODEL_INFO" | grep -i 'context length' | grep -o '[0-9]\+')
+
+# Fallback if detection fails
+if [[ -z "$MAX_TOKENS" ]]; then
+  MAX_TOKENS=512
+fi
+
+LLAMA_OPTS="-n $MAX_TOKENS -st"
+
 
 # 4. Marker and temp variables
 MARKER=">>>"
