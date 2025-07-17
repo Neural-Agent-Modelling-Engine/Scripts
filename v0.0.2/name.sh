@@ -38,7 +38,7 @@ MAX_TOKENS=$(echo "$MODEL_INFO" | grep -i 'context length' | grep -o '[0-9]\+')
 
 # Fallback if detection fails
 if [[ -z "$MAX_TOKENS" ]]; then
-  MAX_TOKENS=512
+  MAX_TOKENS=10024
 fi
 
 LLAMA_OPTS="-n $MAX_TOKENS -st"
