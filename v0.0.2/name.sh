@@ -2,13 +2,16 @@
 
 # Print ASCII art banner on startup
 cat << 'EOF'
-Bornelabs SAS.6 v0.0.2
+
+  Bornelabs SAS.6 v0.0.2
  _   _    _    __  __ _____ 
 | \ | |  / \  |  \/  | ____|
 |  \| | / _ \ | |\/| |  _|  
 | |\  |/ ___ \| |  | | |___ 
 |_| \_/_/   \_\_|  |_|_____|
-Running...
+
+         Running...
+        
 EOF
 
 # 1. Resolve base directory (AI folder)
