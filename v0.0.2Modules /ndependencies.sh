@@ -28,9 +28,9 @@ for tool in "${!pkgs[@]}"; do
   printf " - Checking %-8s… " "$tool"
   if ! command -v "$tool" &>/dev/null; then
     echo "not found; installing ($pkg_name)."
-    if   command -v apt-get &>/dev/null; then sudo apt-get update -y && sudo apt-get install -y "$pkg_name"
-    elif command -v yum     &>/dev/null; then sudo yum install -y "$pkg_name"
-    elif command -v dnf     &>/dev/null; then sudo dnf install -y "$pkg_name"
+    if   command -v apt-get &>/dev/null; then apt-get update -y && apt-get install -y "$pkg_name"
+    elif command -v yum     &>/dev/null; then yum install -y "$pkg_name"
+    elif command -v dnf     &>/dev/null; then dnf install -y "$pkg_name"
     elif command -v pkg     &>/dev/null; then pkg update -y && pkg install -y "$pkg_name"
     else echo "ERROR: no supported package manager found." >&2 && exit 1
     fi
