@@ -7,7 +7,7 @@ MARKER=">>>"
 touch "$BRIDGE"
 
 # Open the NAME app using VIEW intent
-am start -a android.intent.action.VIEW -n com.name/.MainActivity &
+am start -a android.intent.action.VIEW -n tech.bornelabs.name/.MainActivity &
 
 echo "Watching $BRIDGE for lines containing '$MARKER'…"
 
