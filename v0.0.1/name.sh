@@ -6,8 +6,8 @@ MARKER=">>>"
 # Ensure bridge file exists
 touch "$BRIDGE"
 
-# Open the NAME app using VIEW intent
-am start -a android.intent.action.VIEW -n tech.bornelabs.name/.MainActivity &
+# Open the NAME app using its launcher activity
+am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1 &
 
 echo "Watching $BRIDGE for lines containing '$MARKER'…"
 
