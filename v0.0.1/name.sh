@@ -3,32 +3,34 @@
 BRIDGE="bridge.txt"
 MARKER=">>>"
 
-# ensure bridge file exists
+# Ensure bridge file exists
 touch "$BRIDGE"
+
+# Open the NAME app using VIEW intent
+am start -a android.intent.action.VIEW -n com.name/.MainActivity &
 
 echo "Watching $BRIDGE for lines containing '$MARKER'…"
 
 while true; do
-  # read the entire file (we expect a single line when you write a new command)
+  # Read the entire file (expecting a single line when a new command is written)
   LINE=$(<"$BRIDGE")
 
-  # if the line contains the marker...
+  # If the line contains the marker...
   if [[ "$LINE" == *"$MARKER"* ]]; then
-    # extract everything before the first occurrence of the marker
+    # Extract everything before the first occurrence of the marker
     CMD_PART=${LINE%%"$MARKER"*}
-    # trim leading/trailing whitespace
+    # Trim leading/trailing whitespace
     CMD=$(echo "$CMD_PART" | xargs)
 
     if [[ -z "$CMD" ]]; then
       printf "Error: empty command\n" > "$BRIDGE"
     else
-      # execute and capture both stdout+stderr
+      # Execute and capture both stdout+stderr
       OUT=$(eval "$CMD" 2>&1)
-      # overwrite bridge.txt with only the output
+      # Overwrite bridge.txt with only the output
       printf "%s\n" "$OUT" > "$BRIDGE"
     fi
   fi
 
   sleep 1
 done
-
