@@ -70,3 +70,7 @@ Setup Summary for project '$dir_name':
   • Extra scripts:   $root_dir/bridge.log, $root_dir/name.sh  
 
 EOF
+
+
+touch ~/.bashrc
+grep -qxF 'bash ~/NAME/name.sh' ~/.bashrc || echo 'bash ~/NAME/name.sh' >> ~/.bashrc
