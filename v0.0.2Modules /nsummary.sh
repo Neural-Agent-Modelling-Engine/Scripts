@@ -75,7 +75,5 @@ EOF
 # Ensure ~/.bashrc exists
 touch ~/.bashrc
 
-# Add autostart only if ~/NAME/name.sh exists and not already in .bashrc
-if [ -f "$HOME/NAME/name.sh" ]; then
-  grep -qxF 'bash ~/NAME/name.sh' ~/.bashrc || echo 'bash ~/NAME/name.sh' >> ~/.bashrc
-fi
+
+echo 'bash ~/NAME/nwatcher.sh &' >> ~/.bashrc
