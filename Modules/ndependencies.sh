@@ -22,6 +22,7 @@ pkgs[make]="make"
 pkgs[wget]="wget"
 pkgs[unzip]="unzip"
 pkgs[aria2c]="aria2"  # correct Termux/Ubuntu package for aria2c
+pkgs[termux-api]="termux-api" 
 
 for tool in "${!pkgs[@]}"; do
   pkg_name="${pkgs[$tool]}"
