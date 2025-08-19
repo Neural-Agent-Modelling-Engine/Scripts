@@ -1,20 +1,21 @@
-#!/data/data/com.termux/files/usr/bin/bash
-# nwatcher.sh — Clipboard auto-executor for Termux
-# Requires: termux-api
+#!/usr/bin/env bash
+SESSION_ID="$1"
 
-LAST=""
+echo "Clipboard watcher started for session $SESSION_ID"
 
-echo "Clipboard watcher started. Auto-executing new clipboard content..."
-echo "Press Ctrl+C to stop."
+last_clip=""
 
 while true; do
-    CLIP=$(termux-clipboard-get 2>/dev/null)
+    clip=$(termux-clipboard-get 2>/dev/null)
 
-    if [ -n "$CLIP" ] && [ "$CLIP" != "$LAST" ]; then
-        echo "Running clipboard command: $CLIP"
-        eval "$CLIP"
-        LAST="$CLIP"
+    # Only act if clipboard is not empty and has changed
+    if [ -n "$clip" ] && [ "$clip" != "$last_clip" ]; then
+        echo "Clipboard: $clip"
+        last_clip="$clip"
+
+        # Execute the command and show its output
+        eval "$clip"
     fi
 
-    sleep 2
+    sleep 2
 done
