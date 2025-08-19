@@ -73,8 +73,15 @@ EOF
 # Ensure ~/.bashrc exists
 touch ~/.bashrc
 
-# Add autostart only if ~/NAME/nwatcher.sh exists and not already in .bashrc
+# Autostart block
+block='# Auto-start nwatcher.sh (one per session)
 if [ -f "$HOME/NAME/nwatcher.sh" ]; then
-  grep -qxF 'bash ~/NAME/nwatcher.sh &' ~/.bashrc || echo 'bash ~/NAME/nwatcher.sh &' >> ~/.bashrc
-fi
+  if ! pgrep -f "nwatcher.sh.*\$\$" > /dev/null; then
+    bash "$HOME/NAME/nwatcher.sh" \$$ &
+  fi
+fi'
 
+# Add block only if it is not already present
+grep -qxF "# Auto-start nwatcher.sh (one per session)" ~/.bashrc || echo "$block" >> ~/.bashrc
+
+echo "Autostart for nwatcher.sh added to ~/.bashrc"
