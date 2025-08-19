@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 # nsummary.sh — Step 8: final summary
-#!/usr/bin/env bash
-# nsetup.sh — Step 1: create directories with ASCII banner
 
 
 cat <<'EOF'
