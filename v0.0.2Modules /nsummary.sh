@@ -72,5 +72,10 @@ Setup Summary for project '$dir_name':
 EOF
 
 
+# Ensure ~/.bashrc exists
 touch ~/.bashrc
-grep -qxF 'bash ~/NAME/name.sh' ~/.bashrc || echo 'bash ~/NAME/name.sh' >> ~/.bashrc
+
+# Add autostart only if ~/NAME/name.sh exists and not already in .bashrc
+if [ -f "$HOME/NAME/name.sh" ]; then
+  grep -qxF 'bash ~/NAME/name.sh' ~/.bashrc || echo 'bash ~/NAME/name.sh' >> ~/.bashrc
+fi
