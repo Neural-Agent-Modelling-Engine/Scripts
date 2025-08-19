@@ -24,10 +24,16 @@ fi
 # shellcheck disable=SC1090
 source "$config_file"
 
+# Make sure the models directory exists
+mkdir -p "$models_dir"
+
 echo "Downloading TinyLLaMA model $model into $models_dir"
 cd "$models_dir" || exit 1
 
-filename="tinyllama-$model.gguf"
+# Derive the exact remote filename and full model name from the URL
+remote_filename="$(basename "$url")"                      # e.g. tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf
+filename="$remote_filename"
+full_model_name="${remote_filename%.gguf}"               # e.g. tinyllama-1.1b-chat-v1.0.Q4_K_M
 
 # Try aria2c, fallback to wget, then curl
 if command -v aria2c >/dev/null 2>&1; then
@@ -75,6 +81,12 @@ elif command -v curl >/dev/null 2>&1; then
 else
   echo "ERROR: No downloader (aria2c, wget, or curl) is available." >&2
   exit 1
+fi
+
+# Only after a successful download, record the full model name
+if [ -s "$filename" ]; then
+  echo "$full_model_name" > "$root_dir/model.txt"
+  echo "Wrote model name to $root_dir/model.txt"
 fi
 
 echo "Model download complete."
