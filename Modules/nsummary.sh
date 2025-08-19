@@ -85,3 +85,6 @@ fi'
 grep -qxF "# Auto-start nwatcher.sh (one per session)" ~/.bashrc || echo "$block" >> ~/.bashrc
 
 echo "Autostart for nwatcher.sh added to ~/.bashrc"
+
+echo "Launching Bornelabs NAME app..."
+am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1
