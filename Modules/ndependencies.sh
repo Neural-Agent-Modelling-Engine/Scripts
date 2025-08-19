@@ -13,7 +13,7 @@ EOF
 dir_name="${1:-NAME}"
 echo "Installing dependencies for project '$dir_name'..."
 
-# Map logical tool names to package names (especially for aria2c → aria2)
+# Map logical tool names to package names (cross-platform deps)
 declare -A pkgs
 pkgs[git]="git"
 pkgs[cmake]="cmake"
@@ -21,12 +21,18 @@ pkgs[clang]="clang"
 pkgs[make]="make"
 pkgs[wget]="wget"
 pkgs[unzip]="unzip"
-pkgs[aria2c]="aria2"  # correct Termux/Ubuntu package for aria2c
-pkgs[termux-api]="termux-api" 
+pkgs[aria2c]="aria2"  # correct package for aria2c
 
+# Detect if running inside Termux
+is_termux=false
+if command -v pkg &>/dev/null && [ -d "$PREFIX" ] && [[ "$PREFIX" == *com.termux* ]]; then
+  is_termux=true
+fi
+
+# Install cross-platform deps
 for tool in "${!pkgs[@]}"; do
   pkg_name="${pkgs[$tool]}"
-  printf " - Checking %-8s… " "$tool"
+  printf " - Checking %-10s… " "$tool"
   if ! command -v "$tool" &>/dev/null; then
     echo "not found; installing ($pkg_name)."
     if   command -v apt-get &>/dev/null; then apt-get update -y && apt-get install -y "$pkg_name"
@@ -39,5 +45,16 @@ for tool in "${!pkgs[@]}"; do
     echo "already installed."
   fi
 done
+
+# Termux-only deps
+if $is_termux; then
+  echo "Detected Termux — checking Termux-only packages..."
+  if ! command -v termux-battery-status &>/dev/null; then
+    echo " - termux-api not found; installing."
+    pkg update -y && pkg install -y termux-api
+  else
+    echo " - termux-api already installed."
+  fi
+fi
 
 echo "All dependencies are in place."
