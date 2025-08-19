@@ -18,10 +18,10 @@ echo "Fetching scripts into $root_dir"
 mkdir -p "$root_dir"
 cd "$root_dir" || exit
 
-# Download scripts
-wget -O bridge.log https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/v0.0.2/bridge.log
-wget -O name.sh     https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/v0.0.2/name.sh
-wget -O nwatcher.sh https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/v0.0.2Modules%20/nwatcher.sh
+# Download scripts (updated paths to Main/)
+wget -O bridge.log https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/bridge.log
+wget -O name.sh     https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/name.sh
+wget -O nwatcher.sh https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/nwatcher.sh
 
 # Make them executable
 chmod +x name.sh nwatcher.sh
