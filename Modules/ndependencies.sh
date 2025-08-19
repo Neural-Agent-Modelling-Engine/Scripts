@@ -4,7 +4,7 @@
 cat <<'EOF'
  _____           _     
 |_   _|__   ___ | |___ 
-  | |/ _ \ / _ \| / __|
+  | |/ _ \ / _ \| / __| 
   | | (_) | (_) | \__ \
   |_|\___/ \___/|_|___/
   
@@ -49,11 +49,21 @@ done
 # Termux-only deps
 if $is_termux; then
   echo "Detected Termux — checking Termux-only packages..."
+  
+  # termux-api
   if ! command -v termux-battery-status &>/dev/null; then
     echo " - termux-api not found; installing."
     pkg update -y && pkg install -y termux-api
   else
     echo " - termux-api already installed."
+  fi
+
+  # am command (Android Activity Manager)
+  if ! command -v am &>/dev/null; then
+    echo " - 'am' command not found; installing android-tools..."
+    pkg update -y && pkg install -y android-tools
+  else
+    echo " - am command available."
   fi
 fi
 
