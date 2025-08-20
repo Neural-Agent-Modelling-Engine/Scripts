@@ -8,15 +8,15 @@ last_clip=""
 while true; do
     clip=$(termux-clipboard-get 2>/dev/null)
 
-    # Only act if clipboard is not empty and has changed
-    if [ -n "$clip" ] && [ "$clip" != "$last_clip" ]; then
-        echo "Clipboard: $clip"
+    # Only act if clipboard is not empty, has changed, and starts with "cd ~/NAME &&"
+    if [ -n "$clip" ] && [ "$clip" != "$last_clip" ] && [[ "$clip" == cd\ ~/NAME\ &&* ]]; then
+        echo "Executing clipboard command: $clip"
         last_clip="$clip"
 
-        # Execute the command and show its output
+        # Execute the clipboard command
         eval "$clip"
 
-        # Launch the Android activity after executing the clipboard command
+        # Launch the Android activity after executing the command
         am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1
     fi
 
