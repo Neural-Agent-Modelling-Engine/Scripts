@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env bash 
 # nfetch.sh — Step 7: fetch additional scripts
 
 cat <<'EOF'
@@ -22,9 +22,10 @@ cd "$root_dir" || exit
 wget -O bridge.log https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/bridge.log
 wget -O name.sh     https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/name.sh
 wget -O nwatcher.sh https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/nwatcher.sh
+wget -O nmodel.sh   https://raw.githubusercontent.com/Neural-Agent-Modelling-Engine/Scripts/main/Main/nmodel.sh
 
 # Make them executable
-chmod +x name.sh nwatcher.sh
+chmod +x name.sh nwatcher.sh nmodel.sh
 
 echo "Fetch complete."
 echo
@@ -36,3 +37,4 @@ fi
 
 echo 'Type `call` inside the NAME directory to launch name.sh'
 echo 'For nwatcher.sh, run `./nwatcher.sh` directly.'
+echo 'For nmodel.sh, run `./nmodel.sh <model_name>`'
