@@ -23,9 +23,25 @@ LOG="$BASE_DIR/bridge.log"
 BUILD_DIR="$BASE_DIR/llama.cpp/build"
 LLAMA_BIN="$BUILD_DIR/bin/llama-cli"
 
-# 3. Automatically discover a valid .gguf model (excluding vocab-only files)
-LLAMA_MODEL=$(find "$BUILD_DIR/../models" -maxdepth 1 -type f -name "*.gguf" \
-                 ! -name "ggml-vocab-*.gguf" | head -n 1)
+# 3. Read the model selected by nmodel.sh
+MODEL_TXT="$BASE_DIR/model.txt"
+
+if [[ ! -f "$MODEL_TXT" ]]; then
+  echo "Error: model.txt not found. Please run nmodel.sh first." > "$BRIDGE"
+  echo "$(date) ERROR: model.txt not found" >> "$LOG"
+  exit 1
+fi
+
+CURRENT_MODEL=$(<"$MODEL_TXT")
+CURRENT_MODEL="${CURRENT_MODEL%%$'\n'*}"  # strip newline
+
+LLAMA_MODEL="$BUILD_DIR/../models/${CURRENT_MODEL}.gguf"
+
+if [[ ! -f "$LLAMA_MODEL" ]]; then
+  echo "Error: selected model GGUF file not found: $LLAMA_MODEL" > "$BRIDGE"
+  echo "$(date) ERROR: GGUF not found: $LLAMA_MODEL" >> "$LOG"
+  exit 1
+fi
 
 # Detect max context size automatically, or default to 512
 MODEL_INFO=$("$LLAMA_BIN" -m "$LLAMA_MODEL" --info 2>/dev/null)
@@ -41,21 +57,13 @@ LAST_HASH=""
 # 5. Ensure existence of bridge and log files; log startup
 touch "$BRIDGE" "$LOG"
 echo "--- $(date) Starting watcher in $BASE_DIR ---" >> "$LOG"
-
-# 6. Check that a model was found and is valid
-if [[ -z "$LLAMA_MODEL" || ! -f "$LLAMA_MODEL" ]]; then
-  echo "Error: No valid GGUF model found in models directory." > "$BRIDGE"
-  echo "$(date) ERROR: No valid GGUF model found (LLAMA_MODEL=$LLAMA_MODEL)" >> "$LOG"
-  exit 1
-fi
-
 echo "$(date) Using model: $LLAMA_MODEL" >> "$LOG"
 
-# 7. Launch the NAME app on startup
+# 6. Launch the NAME app on startup
 echo "$(date) Launching NAME app..." >> "$LOG"
 am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1 &
 
-# 8. Main watcher loop
+# 7. Main watcher loop
 while true; do
   CURRENT_HASH=$(md5sum "$BRIDGE" | awk '{print $1}')
   [[ "$CURRENT_HASH" == "$LAST_HASH" ]] && { sleep 1; continue; }
