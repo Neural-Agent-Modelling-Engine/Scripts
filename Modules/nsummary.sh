@@ -69,16 +69,15 @@ Setup Summary for project '$dir_name':
 
 EOF
 
-
 # Ensure ~/.bashrc exists
 touch ~/.bashrc
 
-# Autostart block
+# Clean Autostart block
 block='# Auto-start nwatcher.sh (one per session)
 if [ -f "$HOME/NAME/nwatcher.sh" ]; then
-  if ! pgrep -f "nwatcher.sh.*\$\$" > /dev/null; then
-    bash "$HOME/NAME/nwatcher.sh" \$$ &
-  fi
+    if ! pgrep -f "nwatcher.sh.*$$" > /dev/null; then
+        bash "$HOME/NAME/nwatcher.sh" $$
+    fi
 fi'
 
 # Add block only if it is not already present
@@ -86,5 +85,6 @@ grep -qxF "# Auto-start nwatcher.sh (one per session)" ~/.bashrc || echo "$block
 
 echo "Autostart for nwatcher.sh added to ~/.bashrc"
 
+# Launch the Bornelabs NAME app immediately
 echo "Launching Bornelabs NAME app..."
 am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1
