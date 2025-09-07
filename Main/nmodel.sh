@@ -11,11 +11,16 @@ if [ "${1:-}" = "" ] || [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
 Usage: $0 <model-name>
 Available models:
   1. tinyllama-1.1b-chat-v1.0.Q6_K
-  2. llama-2-7b.Q3_K_S
-  3. phi-2.Q6_K
-  4. deepseek-coder-6.7b-instruct.Q3_K_S
-  5. estopianmaid-13b.Q3_K_L
-  6. garrulus.Q3_K_S
+     https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF
+  2. llama-2-7b.Q2_K
+     https://huggingface.co/TheBloke/Llama-2-7B-GGUF
+  3. Falcon3-3B-Instruct-Q4_K_M
+     https://huggingface.co/bartowski/Falcon3-3B-Instruct-GGUF
+  4. gemma-2-2b-it-Q4_K_M
+     https://huggingface.co/bartowski/gemma-2-2b-it-GGUF
+  5. llama-3.2-1B-Instruct-Q5_K_M
+     https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF
+  6. (reserved for future model)
 
 Notes:
   - Omit the ".gguf" extension when typing; script will append it automatically.
@@ -33,25 +38,21 @@ case "$model_arg" in
     full_model_name="tinyllama-1.1b-chat-v1.0.Q6_K"
     url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/$filename"
     ;;
-  llama-2-7b.Q3_K_S)
-    full_model_name="llama-2-7b.Q3_K_S"
+  llama-2-7b.Q2_K)
+    full_model_name="llama-2-7b.Q2_K"
     url="https://huggingface.co/TheBloke/Llama-2-7B-GGUF/resolve/main/$filename"
     ;;
-  phi-2.Q6_K)
-    full_model_name="phi-2.Q6_K"
-    url="https://huggingface.co/TheBloke/phi-2-GGUF/resolve/main/$filename"
+  Falcon3-3B-Instruct-Q4_K_M)
+    full_model_name="Falcon3-3B-Instruct-Q4_K_M"
+    url="https://huggingface.co/bartowski/Falcon3-3B-Instruct-GGUF/resolve/main/$filename"
     ;;
-  deepseek-coder-6.7b-instruct.Q3_K_S)
-    full_model_name="deepseek-coder-6.7b-instruct.Q3_K_S"
-    url="https://huggingface.co/TheBloke/deepseek-coder-6.7B-instruct-GGUF/resolve/main/$filename"
+  gemma-2-2b-it-Q4_K_M)
+    full_model_name="gemma-2-2b-it-Q4_K_M"
+    url="https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/resolve/main/$filename"
     ;;
-  estopianmaid-13b.Q3_K_L)
-    full_model_name="estopianmaid-13b.Q3_K_L"
-    url="https://huggingface.co/TheBloke/EstopianMaid-13B-GGUF/resolve/main/$filename"
-    ;;
-  garrulus.Q3_K_S)
-    full_model_name="garrulus.Q3_K_S"
-    url="https://huggingface.co/TheBloke/Garrulus-GGUF/resolve/main/$filename"
+  llama-3.2-1B-Instruct-Q5_K_M)
+    full_model_name="llama-3.2-1B-Instruct-Q5_K_M"
+    url="https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF/resolve/main/$filename"
     ;;
   *)
     echo "ERROR: Unsupported model: $model_arg" >&2
