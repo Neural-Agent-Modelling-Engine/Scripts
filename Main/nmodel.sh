@@ -9,21 +9,24 @@ set -euo pipefail
 if [ "${1:-}" = "" ] || [ "${1:-}" = "-h" ] || [ "${1:-}" = "--help" ]; then
   cat <<EOF
 Usage: $0 <model-name>
-Available models:
+Available models (lightweight, suitable for low-RAM systems):
   1. tinyllama-1.1b-chat-v1.0.Q6_K
      https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF
-  2. llama-2-7b.Q2_K
-     https://huggingface.co/TheBloke/Llama-2-7B-GGUF
-  3. Falcon3-3B-Instruct-Q4_K_M
+  2. Falcon3-3B-Instruct-Q4_K_M
      https://huggingface.co/bartowski/Falcon3-3B-Instruct-GGUF
-  4. gemma-2-2b-it-Q4_K_M
-     https://huggingface.co/bartowski/gemma-2-2b-it-GGUF
-  5. llama-3.2-1B-Instruct-Q5_K_M
-     https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF
-  6. (reserved for future model)
+  3. KobbleTinyV2-1.1B
+     https://huggingface.co/concedo/KobbleTinyV2-1.1B-GGUF
+  4. pygmalion-1.3b-i1
+     https://huggingface.co/mradermacher/pygmalion-1.3b-i1-GGUF
+  5. Curio-1.1b-i1
+     https://huggingface.co/mradermacher/Curio-1.1b-i1-GGUF
+  6. teenytinyllama-460m-chat
+     https://huggingface.co/afrideva/TeenyTinyLlama-460m-Chat-GGUF
 
 Notes:
   - Omit the ".gguf" extension when typing; script will append it automatically.
+  - If a repo uses a different filename than the simple model key above,
+    pass the exact filename (without .gguf) or edit the case block.
 EOF
   exit 0
 fi
@@ -38,21 +41,25 @@ case "$model_arg" in
     full_model_name="tinyllama-1.1b-chat-v1.0.Q6_K"
     url="https://huggingface.co/TheBloke/TinyLlama-1.1B-Chat-v1.0-GGUF/resolve/main/$filename"
     ;;
-  llama-2-7b.Q2_K)
-    full_model_name="llama-2-7b.Q2_K"
-    url="https://huggingface.co/TheBloke/Llama-2-7B-GGUF/resolve/main/$filename"
-    ;;
   Falcon3-3B-Instruct-Q4_K_M)
     full_model_name="Falcon3-3B-Instruct-Q4_K_M"
     url="https://huggingface.co/bartowski/Falcon3-3B-Instruct-GGUF/resolve/main/$filename"
     ;;
-  gemma-2-2b-it-Q4_K_M)
-    full_model_name="gemma-2-2b-it-Q4_K_M"
-    url="https://huggingface.co/bartowski/gemma-2-2b-it-GGUF/resolve/main/$filename"
+  KobbleTinyV2-1.1B)
+    full_model_name="KobbleTinyV2-1.1B"
+    url="https://huggingface.co/concedo/KobbleTinyV2-1.1B-GGUF/resolve/main/$filename"
     ;;
-  llama-3.2-1B-Instruct-Q5_K_M)
-    full_model_name="llama-3.2-1B-Instruct-Q5_K_M"
-    url="https://huggingface.co/bartowski/Llama-3.2-1B-Instruct-GGUF/resolve/main/$filename"
+  pygmalion-1.3b-i1)
+    full_model_name="pygmalion-1.3b-i1"
+    url="https://huggingface.co/mradermacher/pygmalion-1.3b-i1-GGUF/resolve/main/$filename"
+    ;;
+  Curio-1.1b-i1)
+    full_model_name="Curio-1.1b-i1"
+    url="https://huggingface.co/mradermacher/Curio-1.1b-i1-GGUF/resolve/main/$filename"
+    ;;
+  teenytinyllama-460m-chat)
+    full_model_name="teenytinyllama-460m-chat"
+    url="https://huggingface.co/afrideva/TeenyTinyLlama-460m-Chat-GGUF/resolve/main/$filename"
     ;;
   *)
     echo "ERROR: Unsupported model: $model_arg" >&2
