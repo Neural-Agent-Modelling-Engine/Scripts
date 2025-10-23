@@ -14,9 +14,8 @@ while true; do
 
         # Execute the clipboard command
         eval "$clip"
+        echo "✓ Done"
 
-        # Launch the Android activity after executing the command
-        am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1
     fi
 
     sleep 2
