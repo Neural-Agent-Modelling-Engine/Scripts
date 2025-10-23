@@ -12,11 +12,19 @@ while true; do
         echo "Executing clipboard command: $clip"
         last_clip="$clip"
 
+        # Check if it contains 'stop &&'
+        if [[ "$clip" == *"stop &&"* ]]; then
+            cmd="${clip#*stop && }"
+            echo "Watcher stopped."
+            eval "$cmd"
+            exit 0
+        fi
+
         # Execute the clipboard command
         eval "$clip"
         echo "✓ Done"
 
     fi
 
-    sleep 2
+    sleep 2
 done
