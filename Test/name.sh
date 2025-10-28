@@ -12,42 +12,58 @@ am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1 &
 echo "Watching $BRIDGE for lines containing '$MARKER'…"
 
 while true; do
-  # Read the entire file (expecting a single line when a new command is written)
+  # Read entire file
   LINE=$(<"$BRIDGE")
 
-  # First handle the existing marker '>>>'
+  # Handle '>>>'
   if [[ "$LINE" == *"$MARKER"* ]]; then
-    # Extract everything before the first occurrence of the marker
+    # Extract command before '>>>'
     CMD_PART=${LINE%%"$MARKER"*}
-    # Trim leading/trailing whitespace
     CMD=$(echo "$CMD_PART" | xargs)
 
     if [[ -z "$CMD" ]]; then
-      printf "Error: empty command\n" > "$BRIDGE"
+      : > "$BRIDGE"
     else
-      # Execute and capture both stdout+stderr
-      OUT=$(eval "$CMD" 2>&1)
-      # Overwrite bridge.txt with only the output
-      printf "%s\n" "$OUT" > "$BRIDGE"
+      # Clear bridge immediately
+      : > "$BRIDGE"
+
+      # Export command for name.sh
+      export NAME_CMD="$CMD"
+
+      # Run name.sh (ignore output)
+      if [[ -x "name.sh" ]]; then
+        ./name.sh >/dev/null 2>&1
+      else
+        bash name.sh >/dev/null 2>&1
+      fi
+
+      # Leave bridge.txt empty no matter what
+      : > "$BRIDGE"
     fi
 
-  # New behavior: a line containing '>>' (but NOT handled above as '>>>')
+  # Handle '>>' (execute and then stop)
   elif [[ "$LINE" == *">>"* ]]; then
-    # Extract everything before the first occurrence of '>>'
     CMD_PART=${LINE%%">>"*}
-    # Trim leading/trailing whitespace
     CMD=$(echo "$CMD_PART" | xargs)
 
     if [[ -z "$CMD" ]]; then
-      # Write error and then exit the script
-      printf "Error: empty command\n" > "$BRIDGE"
+      : > "$BRIDGE"
       exit 1
     else
-      # Execute the command, capture output, write it to bridge (so caller can read),
-      # then stop the script as requested.
-      OUT=$(eval "$CMD" 2>&1)
-      printf "%s\n" "$OUT" > "$BRIDGE"
-      # Stop the script after executing the command
+      # Clear bridge immediately
+      : > "$BRIDGE"
+
+      # Export and run
+      export NAME_CMD="$CMD"
+
+      if [[ -x "name.sh" ]]; then
+        ./name.sh >/dev/null 2>&1
+      else
+        bash name.sh >/dev/null 2>&1
+      fi
+
+      # Leave bridge empty and stop script
+      : > "$BRIDGE"
       exit 0
     fi
   fi
