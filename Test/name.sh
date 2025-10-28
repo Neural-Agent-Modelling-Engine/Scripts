@@ -12,59 +12,42 @@ am start -n tech.bornelabs.name/io.kodular.brianxborne.NAME.Screen1 &
 echo "Watching $BRIDGE for lines containing '$MARKER'…"
 
 while true; do
-  # Read entire file
+  # Read the entire file (expecting a single line when a new command is written)
   LINE=$(<"$BRIDGE")
 
-  # Handle '>>>'
+  # If the line contains the type 1 marker...
   if [[ "$LINE" == *"$MARKER"* ]]; then
-    # Extract command before '>>>'
+    # Extract everything before the first occurrence of the marker
     CMD_PART=${LINE%%"$MARKER"*}
+    # Trim leading/trailing whitespace
     CMD=$(echo "$CMD_PART" | xargs)
 
     if [[ -z "$CMD" ]]; then
-      : > "$BRIDGE"
+      printf "Error: empty command\n" > "$BRIDGE"
     else
-      # Clear bridge immediately
-      : > "$BRIDGE"
-
-      # Export command for name.sh
-      export NAME_CMD="$CMD"
-
-      # Run name.sh (ignore output)
-      if [[ -x "name.sh" ]]; then
-        ./name.sh >/dev/null 2>&1
-      else
-        bash name.sh >/dev/null 2>&1
-      fi
-
-      # Leave bridge.txt empty no matter what
-      : > "$BRIDGE"
+      # Execute and capture both stdout+stderr
+      OUT=$(eval "$CMD" 2>&1)
+      # Overwrite bridge.txt with only the output
+      printf "%s\n" "$OUT" > "$BRIDGE"
     fi
 
-  # Handle '>>' (execute and then stop)
+  # If the line contains the type 2 marker '>>'
   elif [[ "$LINE" == *">>"* ]]; then
+    # Extract everything before the first occurrence of '>>'
     CMD_PART=${LINE%%">>"*}
+    # Trim leading/trailing whitespace
     CMD=$(echo "$CMD_PART" | xargs)
 
-    if [[ -z "$CMD" ]]; then
+    if [[ -n "$CMD" ]]; then
+      # Clear bridge.txt immediately
       : > "$BRIDGE"
-      exit 1
+      # Execute command silently (output discarded)
+      eval "$CMD" >/dev/null 2>&1
+      # Ensure bridge.txt stays empty
+      : > "$BRIDGE"
     else
-      # Clear bridge immediately
+      # Empty command — clear bridge.txt
       : > "$BRIDGE"
-
-      # Export and run
-      export NAME_CMD="$CMD"
-
-      if [[ -x "name.sh" ]]; then
-        ./name.sh >/dev/null 2>&1
-      else
-        bash name.sh >/dev/null 2>&1
-      fi
-
-      # Leave bridge empty and stop script
-      : > "$BRIDGE"
-      exit 0
     fi
   fi
 
