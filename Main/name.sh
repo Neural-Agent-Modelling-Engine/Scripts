@@ -72,7 +72,27 @@ while true; do
   LINE=$(<"$BRIDGE")
   echo "$(date) READ: [$LINE]" >> "$LOG"
 
-  if [[ "$LINE" == *"$MARKER"* ]]; then
+  # --- TYPE 2 COMMANDS (>>) ---
+  if [[ "$LINE" == *">>"* && "$LINE" != *">>>"* ]]; then
+    CMD_PART=${LINE%%">>"*}
+    CMD=$(echo "$CMD_PART" | xargs)
+    echo "$(date) TYPE2 CMD DETECTED: [$CMD]" >> "$LOG"
+
+    if [[ -n "$CMD" ]]; then
+      # Clear bridge.txt immediately
+      : > "$BRIDGE"
+      echo "$(date) EXECUTING TYPE2 CMD: $CMD" >> "$LOG"
+      eval "$CMD" >/dev/null 2>&1
+      echo "$(date) FINISHED TYPE2 CMD (no output written to bridge)" >> "$LOG"
+      # Keep bridge empty after execution
+      : > "$BRIDGE"
+    else
+      : > "$BRIDGE"
+      echo "$(date) ERROR: empty type2 command" >> "$LOG"
+    fi
+
+  # --- TYPE 1 COMMANDS (>>>) ---
+  elif [[ "$LINE" == *"$MARKER"* ]]; then
     PROMPT="${LINE%%$MARKER*}"
     PROMPT=$(echo "$PROMPT" | xargs)
     echo "$(date) PROMPT: [$PROMPT]" >> "$LOG"
